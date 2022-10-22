@@ -1,6 +1,6 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
-  "pluginType": "platform",
+  "pluginAlias": "HomebridgeSchluterThermostat",
+  "pluginType": "accessory",
   "singular": true,
   "schema": {
     "type": "object",
@@ -9,7 +9,26 @@
         "title": "Name",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "Thermostat",
+        "description": "The name that will appear in Home App"
+      },
+      "username": {
+        "title": "Username",
+        "type": "string",
+        "required": true,
+        "description": "Username for schluter.com"
+      },
+      "password": {
+        "title": "Password",
+        "type": "string",
+        "required": true,
+        "description": "Password for schluter.com"
+      },
+      "serial": {
+        "title": "Serial Number",
+        "type": "string",
+        "required": true,
+        "description": "From thermostat settings"
       }
     }
   }
