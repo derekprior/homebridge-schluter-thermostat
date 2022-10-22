@@ -15,7 +15,6 @@ class Thermostat {
   private readonly hap: HAP;
   private readonly config: AccessoryConfig;
   private readonly thermostatService: Service;
-  private readonly sessionId?: string;
 
   constructor(log: Logging, config: AccessoryConfig, api: API) {
     this.log = log;
@@ -65,21 +64,18 @@ class Thermostat {
 
   handleCurrentTemperatureGet() {
     this.log.debug('GET CurrentTemperature');
-    // Temperature
-    return 99;
+    return 21.11;
   }
 
   handleTargetTemperatureGet() {
     this.log.debug('GET TargetTemperature');
-    // SetPointTemp
-    return 120;
+    return 21.11;
   }
 
   handleTargetTemperatureSet(value) {
-    this.log.debug('SET TargetTemperature');
+    this.log.debug(`SET TargetTemperature ${value}`);
     // ComfortTemperature: value
     // RegulationMode: 2
-    return value;
   }
 
   handleTemperatureDisplayUnitsGet() {
