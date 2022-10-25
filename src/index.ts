@@ -87,12 +87,12 @@ class Thermostat {
 
   handleTemperatureDisplayUnitsGet() {
     this.log.debug('GET TemperatureDisplayUnits');
-    return this.hap.Characteristic.TemperatureDisplayUnits.FAHRENHEIT;
+    return this.schluterAPI.getTemperatureUnit();
   }
 
-  handleTemperatureDisplayUnitsSet() {
+  handleTemperatureDisplayUnitsSet(value) {
     this.log.debug('SET TemperatureDisplayUnits');
-    return this.hap.Characteristic.TemperatureDisplayUnits.FAHRENHEIT;
+    this.schluterAPI.setTemperatureUnit(value);
   }
 
   getServices(){
