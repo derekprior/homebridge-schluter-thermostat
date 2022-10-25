@@ -6,6 +6,11 @@ type ThermostatState = {
   targetTemperature: number;
 };
 
+enum TemperatureUnit {
+  Celsius = 0,
+  Fahrenheit = 1
+}
+
 export class SchluterAPI {
   private readonly email: string;
   private readonly password: string;
@@ -25,6 +30,25 @@ export class SchluterAPI {
 
   async getTargetTemperature(): Promise<number> {
     return (await this.thermostatState()).targetTemperature;
+  }
+
+  async getTemperatureUnit(): Promise<TemperatureUnit> {
+    const sessionId = await this.login();
+    const params = { sessionid: sessionId };
+    const result = await axios.get(this.accountUrl(), { params: params });
+
+    if (result.data.TempUnitIsCelsius) {
+      return TemperatureUnit.Celsius;
+    } else {
+      return TemperatureUnit.Fahrenheit;
+    }
+  }
+
+  async setTemperatureUnit(value: TemperatureUnit) {
+    const sessionId = await this.login();
+    const params = { sessionid: sessionId };
+    const data = { TempUnitIsCelsius: value === TemperatureUnit.Celsius };
+    await axios.put(this.accountUrl(), data, { params: params });
   }
 
   async setTargetTemperature(targetTemperature: number) {
@@ -60,5 +84,9 @@ export class SchluterAPI {
 
   private signInUrl() {
     return 'https://ditra-heat-e-wifi.schluter.com/api/authenticate/user';
+  }
+
+  private accountUrl() {
+    return 'https://ditra-heat-e-wifi.schluter.com/api/useraccount';
   }
 }
