@@ -1,3 +1,4 @@
+import { SchluterAPI } from './schluter-api';
 import {
   AccessoryConfig,
   API,
@@ -15,11 +16,18 @@ class Thermostat {
   private readonly hap: HAP;
   private readonly config: AccessoryConfig;
   private readonly thermostatService: Service;
+  private readonly schluterAPI: SchluterAPI;
 
   constructor(log: Logging, config: AccessoryConfig, api: API) {
     this.log = log;
     this.hap = api.hap;
     this.config = config;
+    this.schluterAPI = new SchluterAPI(
+      this.config.email,
+      this.config.password,
+      this.config.serial,
+      this.log,
+    );
 
     this.thermostatService = new this.hap.Service.Thermostat(this.config.name);
 
@@ -64,18 +72,17 @@ class Thermostat {
 
   handleCurrentTemperatureGet() {
     this.log.debug('GET CurrentTemperature');
-    return 21.11;
+    return this.schluterAPI.getTemperature();
   }
 
   handleTargetTemperatureGet() {
     this.log.debug('GET TargetTemperature');
-    return 21.11;
+    return this.schluterAPI.getTargetTemperature();
   }
 
   handleTargetTemperatureSet(value) {
     this.log.debug(`SET TargetTemperature ${value}`);
-    // ComfortTemperature: value
-    // RegulationMode: 2
+    this.schluterAPI.setTargetTemperature(value);
   }
 
   handleTemperatureDisplayUnitsGet() {
