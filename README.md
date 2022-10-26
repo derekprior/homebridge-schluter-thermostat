@@ -10,14 +10,14 @@ by those who are comfortable with debugging and troubleshooting.
 
 This plugin has been tested with my own Schluter DITRA-HEAT-E-WiFi thermostat.
 Schluter thermostats are manufactured by OJ Electronics, who supplies several
-other companies with similar thermostats. If your thermostat looks like the
-one below, this plugin could likely be made to work with it, although the
-plugin currently hardcodes the Schluter API endpoints.
-
-![Schluter Thermostat](https://user-images.githubusercontent.com/152152/197906548-747967b2-e13d-405e-8d06-1ead7d5f934a.png)
+other companies with similar thermostats. If your thermostat [looks like this],
+then this plugin could likely be made to work with it, although some changes will
+be necessary.
 
 If you're interested in helping to make this plugin compatible with other brands
 supplied by OJ Electronics, please open an issue.
+
+[looks like this]: https://user-images.githubusercontent.com/152152/197906548-747967b2-e13d-405e-8d06-1ead7d5f934a.png
 
 ## Installation and Configuration
 
