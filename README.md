@@ -14,7 +14,7 @@ other companies with similar thermostats. If your thermostat looks like the
 one below, this plugin could likely be made to work with it, although the
 plugin currently hardcodes the Schluter API endpoints.
 
-![Schluter Thermostat](https://user-images.githubusercontent.com/152152/197906548-747967b2-e13d-405e-8d06-1ead7d5f934a.png")
+![Schluter Thermostat](https://user-images.githubusercontent.com/152152/197906548-747967b2-e13d-405e-8d06-1ead7d5f934a.png)
 
 If you're interested in helping to make this plugin compatible with other brands
 supplied by OJ Electronics, please open an issue.
