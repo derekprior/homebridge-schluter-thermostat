@@ -1,8 +1,7 @@
 {
-  "private": true,
   "displayName": "Homebridge Schluter Thermostat",
   "name": "homebridge-schluter-thermostat",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Controls Schluter WiFi thermostats",
   "license": "MIT",
   "repository": {
