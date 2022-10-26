@@ -1,7 +1,7 @@
 {
   "pluginAlias": "HomebridgeSchluterThermostat",
   "pluginType": "accessory",
-  "singular": true,
+  "singular": false,
   "schema": {
     "type": "object",
     "properties": {
