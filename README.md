@@ -3,8 +3,42 @@
 This is a homebridge plugin to control Schluter WiFi thermostats, used for
 electric in floor heating systems.
 
-**This plugin is experimental and not yet fit for use except by folks looking to
-contribute to its development**.
+**Note**: This plugin is in the early stages of development and should only be used
+by those who are comfortable with debugging and troubleshooting.
+
+## Compatibility
+
+This plugin has been tested with my own Schluter DITRA-HEAT-E-WiFi thermostat.
+Schluter thermostats are manufactured by OJ Electronics, who supplies several
+other companies with similar thermostats. If your thermostat [looks like this],
+then this plugin could likely be made to work with it, although some changes will
+be necessary.
+
+If you're interested in helping to make this plugin compatible with other brands
+supplied by OJ Electronics, please open an issue.
+
+[looks like this]: https://user-images.githubusercontent.com/152152/197906548-747967b2-e13d-405e-8d06-1ead7d5f934a.png
+
+## Installation and Configuration
+
+Install using Homebridge's UI and searching for the `homebridge-schluter-thermostat`
+plugin.
+
+To use this plugin, you will need to have already connected your thermostat to
+Wifi and registered an account with Schluter. You will also need to have your
+thermostat serial number which is available in Schluter's web interface or
+directly on your thermostat by going to `Menu`, `User Settings`, `Information`,
+`View as Text` and looking for the `Unit Id` or `Serial` field.
+
+Once you have your serial number, you can complete the configuration with the
+following fields:
+
+* **Name**: The name of the device as it will appear in HomeKit
+* **Email**: The email address you used to register your thermostat with Schluter
+* **Password**: The password you used to register your thermostat with Schluter
+* **Serial Number**: The serial number of your thermostat
+
+If you have multiple thermostats, you can add multiple instances of this plugin.
 
 ## Development
 
