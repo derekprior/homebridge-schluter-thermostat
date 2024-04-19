@@ -1,4 +1,4 @@
-import { SchluterAPI } from './schluter-api';
+import { SchluterAPI, RegulationMode } from './schluter-api';
 import {
   AccessoryConfig,
   API,
@@ -17,6 +17,7 @@ class Thermostat {
   private readonly config: AccessoryConfig;
   private readonly thermostatService: Service;
   private readonly schluterAPI: SchluterAPI;
+  private regulationMode: RegulationMode;
 
   constructor(log: Logging, config: AccessoryConfig, api: API) {
     this.log = log;
@@ -28,6 +29,8 @@ class Thermostat {
       this.config.serial,
       this.log,
     );
+
+    this.regulationMode = this.config.regulationMode || RegulationMode.Schedule;
 
     this.thermostatService = new this.hap.Service.Thermostat(this.config.name);
 
@@ -81,8 +84,8 @@ class Thermostat {
   }
 
   handleTargetTemperatureSet(value) {
-    this.log.debug(`SET TargetTemperature ${value}`);
-    this.schluterAPI.setTargetTemperature(value);
+    this.log.debug(`SET TargetTemperature ${value} with Regulation Mode ${this.regulationMode}`);
+    this.schluterAPI.setTargetTemperature(value, this.regulationMode);
   }
 
   handleTemperatureDisplayUnitsGet() {
