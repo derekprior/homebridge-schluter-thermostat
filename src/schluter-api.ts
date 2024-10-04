@@ -11,6 +11,12 @@ enum TemperatureUnit {
   Fahrenheit = 1
 }
 
+export enum RegulationMode {
+  Schedule = 1,
+  Temporary = 2,
+  Permanent = 3
+}
+
 export class SchluterAPI {
   private static signInUrl = 'https://ditra-heat-e-wifi.schluter.com/api/authenticate/user';
   private static thermostatUrl = 'https://ditra-heat-e-wifi.schluter.com/api/thermostat';
@@ -90,11 +96,11 @@ export class SchluterAPI {
     await axios.put(SchluterAPI.accountUrl, data);
   }
 
-  async setTargetTemperature(targetTemperature: number) {
+  async setTargetTemperature(targetTemperature: number, RegulationMode: RegulationMode) {
     const params = { serialnumber: this.serialNumber };
     const data = {
       ComfortTemperature: Math.round(targetTemperature * 100),
-      RegulationMode: 2,
+      RegulationMode: RegulationMode,
     };
 
     await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
