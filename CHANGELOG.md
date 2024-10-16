@@ -3,7 +3,18 @@
 The noteworthy changes for each Scenic version are included here. For a complete
 changelog, see the [commits] for each version via the version links.
 
-[commits]: https://github.com/scenic-views/scenic/commits/master
+[commits]: https://github.com/derekprior/homebridge-schluter-thermostat/commits/main
+
+## [0.2.0] October 15, 2024
+
+### Added
+
+* Support for a `regulationMode` setting which controls whether temperature
+  changes will be overridden by schedule, if they are temporary (will be
+  maintained for a few hours before reverting to schedule), or if they are
+  "permanent" (will not be override by schedule). See #16
+
+[0.2.0]: https://github.com/derekprior/homebridge-schluter-thermostat/compare/v0.1.0...v0.2.0
 
 ## [0.1.0] October 26, 2022
 
@@ -17,4 +28,4 @@ pre-1.0 versions.
 * Ability to set the target temperature
 * Ability to get and set the temperature unit
 
-[0.1.0]: https://github.com/scenic-views/scenic/compare/811cb40b913d08699463d7949e90e4ea626dc805...v0.1.0
+[0.1.0]: https://github.com/derekprior/homebridge-schluter-thermostat/compare/1b8ec49429a311463d3ce14fdee2f21f3dc7c91e...v0.1.0
