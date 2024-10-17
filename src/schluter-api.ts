@@ -45,14 +45,18 @@ export class SchluterAPI {
   }
 
   private async appendSessionId(request) {
-    if (request.url !== SchluterAPI.signInUrl) {
-      this.sessionId = this.sessionId || (await this.signIn());
-      this.log.debug('Appending session ID %s to request', this.sessionId);
-      request.params = request.params || {};
-      request.params.sessionid = this.sessionId;
+    try {
+      if (request.url !== SchluterAPI.signInUrl) {
+        this.sessionId = this.sessionId || (await this.signIn());
+        this.log.debug('Appending session ID %s to request', this.sessionId);
+        request.params = request.params || {};
+        request.params.sessionid = this.sessionId;
+      }
+      return request;
+    } catch (error) {
+      this.log.error('Error appending session ID:', error);
+      throw error;
     }
-
-    return request;
   }
 
   private async clearSessionId(error) {
@@ -66,91 +70,125 @@ export class SchluterAPI {
   }
 
   private async signIn(): Promise<string> {
-    const data = { email: this.email, password: this.password };
+    try {
+      const data = { email: this.email, password: this.password };
+      const result = await axios.post(SchluterAPI.signInUrl, data);
 
-    const result = await axios.post(SchluterAPI.signInUrl, data);
-
-    switch (result.data.ErrorCode) {
-      case 0: {
-        return result.data.SessionId;
+      switch (result.data.ErrorCode) {
+        case 0:
+          return result.data.SessionId;
+        case 1:
+          throw new Error('Sign in: invalid email');
+        case 2:
+          throw new Error('Sign in: invalid password');
+        default:
+          throw new Error('Sign in: unknown error');
       }
-      case 1: {
-        throw new Error('Sign in: invalid email');
-      }
-      case 2: {
-        throw new Error('Sign in: invalid password');
-      }
-      default: {
-        throw new Error('Sign in: unknown error');
-      }
+    } catch (error) {
+      this.log.error('Error signing in to Schluter API:', error);
+      throw error;
     }
   }
 
   async getTemperature(): Promise<number> {
-    return (await this.thermostatState()).temperature;
+    try {
+      return (await this.thermostatState()).temperature;
+    } catch (error) {
+      this.log.error('Error fetching temperature:', error);
+      throw error;
+    }
   }
 
   async getTargetTemperature(): Promise<number> {
-    return (await this.thermostatState()).targetTemperature;
+    try {
+      return (await this.thermostatState()).targetTemperature;
+    } catch (error) {
+      this.log.error('Error fetching target temperature:', error);
+      throw error;
+    }
   }
 
   async getTemperatureUnit(): Promise<TemperatureUnit> {
-    const result = await axios.get(SchluterAPI.accountUrl);
-
-    if (result.data.TempUnitIsCelsius) {
-      return TemperatureUnit.Celsius;
-    } else {
-      return TemperatureUnit.Fahrenheit;
+    try {
+      const result = await axios.get(SchluterAPI.accountUrl);
+      if (result.data.TempUnitIsCelsius) {
+        return TemperatureUnit.Celsius;
+      } else {
+        return TemperatureUnit.Fahrenheit;
+      }
+    } catch (error) {
+      this.log.error('Error fetching temperature unit:', error);
+      throw error;
     }
   }
 
   async setTemperatureUnit(value: TemperatureUnit) {
-    const data = { TempUnitIsCelsius: value === TemperatureUnit.Celsius };
-    await axios.put(SchluterAPI.accountUrl, data);
+    try {
+      const data = { TempUnitIsCelsius: value === TemperatureUnit.Celsius };
+      await axios.put(SchluterAPI.accountUrl, data);
+    } catch (error) {
+      this.log.error('Error setting temperature unit:', error);
+      throw error;
+    }
   }
 
   async setScheduleMode() {
-    const params = { serialnumber: this.serialNumber };
-    const data = {
-      RegulationMode: RegulationMode.Schedule,
-      VacationEnabled: false,
-    };
-
-    await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
+    try {
+      const params = { serialnumber: this.serialNumber };
+      const data = {
+        RegulationMode: RegulationMode.Schedule,
+        VacationEnabled: false,
+      };
+      await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
+    } catch (error) {
+      this.log.error('Error setting schedule mode:', error);
+      throw error;
+    }
   }
 
   async setComfortTemperature(targetTemperature: number, endTime: string) {
-    const params = { serialnumber: this.serialNumber };
-    const data = {
-      ComfortTemperature: Math.round(targetTemperature * 100),
-      ComfortEndTime: endTime,
-      RegulationMode: RegulationMode.Temporary,
-      VacationEnabled: false,
-    };
-
-    await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
+    try {
+      const params = { serialnumber: this.serialNumber };
+      const data = {
+        ComfortTemperature: Math.round(targetTemperature * 100),
+        ComfortEndTime: endTime,
+        RegulationMode: RegulationMode.Temporary,
+        VacationEnabled: false,
+      };
+      await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
+    } catch (error) {
+      this.log.error('Error setting comfort temperature:', error);
+      throw error;
+    }
   }
 
   async setManualTemperature(targetTemperature: number) {
-    const params = { serialnumber: this.serialNumber };
-    const data = {
-      ManualTemperature: Math.round(targetTemperature * 100),
-      RegulationMode: RegulationMode.Permanent,
-      VacationEnabled: false,
-    };
-
-    await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
+    try {
+      const params = { serialnumber: this.serialNumber };
+      const data = {
+        ManualTemperature: Math.round(targetTemperature * 100),
+        RegulationMode: RegulationMode.Permanent,
+        VacationEnabled: false,
+      };
+      await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
+    } catch (error) {
+      this.log.error('Error setting manual temperature:', error);
+      throw error;
+    }
   }
 
   private async thermostatState(): Promise<ThermostatState> {
-    const sessionId = await this.signIn();
-    const params = { serialnumber: this.serialNumber, sessionid: sessionId };
-    const result = await axios.get(SchluterAPI.thermostatUrl, {
-      params: params,
-    });
-    return {
-      temperature: result.data.Temperature / 100,
-      targetTemperature: result.data.SetPointTemp / 100,
-    };
+    try {
+      const sessionId = await this.signIn();
+      const params = { serialnumber: this.serialNumber, sessionid: sessionId };
+      const result = await axios.get(SchluterAPI.thermostatUrl, { params: params });
+      return {
+        temperature: result.data.Temperature / 100,
+        targetTemperature: result.data.SetPointTemp / 100,
+      };
+    } catch (error) {
+      this.log.error('Error fetching thermostat state:', error);
+      throw error;
+    }
   }
 }
