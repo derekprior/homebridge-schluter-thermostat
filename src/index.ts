@@ -1,11 +1,6 @@
-import { SchluterAPI, RegulationMode } from './schluter-api';
-import {
-  AccessoryConfig,
-  API,
-  HAP,
-  Logging,
-  Service,
-} from 'homebridge';
+import { SchluterAPI } from './schluter-api';
+import { RegulationMode } from './types';
+import { AccessoryConfig, API, HAP, Logging, Service } from 'homebridge';
 
 export = (api: API) => {
   api.registerAccessory('HomebridgeSchluterThermostat', Thermostat);
@@ -34,10 +29,12 @@ class Thermostat {
 
     this.thermostatService = new this.hap.Service.Thermostat(this.config.name);
 
-    this.thermostatService.getCharacteristic(this.hap.Characteristic.CurrentHeatingCoolingState)
+    this.thermostatService
+      .getCharacteristic(this.hap.Characteristic.CurrentHeatingCoolingState)
       .onGet(this.handleCurrentHeatingCoolingStateGet.bind(this));
 
-    this.thermostatService.getCharacteristic(this.hap.Characteristic.TargetHeatingCoolingState)
+    this.thermostatService
+      .getCharacteristic(this.hap.Characteristic.TargetHeatingCoolingState)
       .onGet(this.handleTargetHeatingCoolingStateGet.bind(this))
       .onSet(this.handleTargetHeatingCoolingStateSet.bind(this))
       .setProps({
@@ -45,14 +42,17 @@ class Thermostat {
         maxValue: this.hap.Characteristic.TargetHeatingCoolingState.HEAT,
       });
 
-    this.thermostatService.getCharacteristic(this.hap.Characteristic.CurrentTemperature)
+    this.thermostatService
+      .getCharacteristic(this.hap.Characteristic.CurrentTemperature)
       .onGet(this.handleCurrentTemperatureGet.bind(this));
 
-    this.thermostatService.getCharacteristic(this.hap.Characteristic.TargetTemperature)
+    this.thermostatService
+      .getCharacteristic(this.hap.Characteristic.TargetTemperature)
       .onGet(this.handleTargetTemperatureGet.bind(this))
       .onSet(this.handleTargetTemperatureSet.bind(this));
 
-    this.thermostatService.getCharacteristic(this.hap.Characteristic.TemperatureDisplayUnits)
+    this.thermostatService
+      .getCharacteristic(this.hap.Characteristic.TemperatureDisplayUnits)
       .onGet(this.handleTemperatureDisplayUnitsGet.bind(this))
       .onSet(this.handleTemperatureDisplayUnitsSet.bind(this));
   }
@@ -84,8 +84,27 @@ class Thermostat {
   }
 
   handleTargetTemperatureSet(value) {
-    this.log.debug(`SET TargetTemperature ${value} with Regulation Mode ${this.regulationMode}`);
-    this.schluterAPI.setTargetTemperature(value, this.regulationMode);
+    this.log.debug(
+      `SET TargetTemperature ${value} with Regulation Mode ${this.regulationMode}`,
+    );
+
+    switch (this.regulationMode) {
+      case RegulationMode.Permanent:
+        this.setPermanentTemperature(value);
+        break;
+
+      case RegulationMode.Temporary:
+        this.setComfortTemperature(
+          value,
+          this.getComfortEndTime(this.config.comfortDuration),
+        );
+        break;
+
+      case RegulationMode.Schedule:
+      default:
+        this.setScheduleMode();
+        break;
+    }
   }
 
   handleTemperatureDisplayUnitsGet() {
@@ -98,8 +117,29 @@ class Thermostat {
     this.schluterAPI.setTemperatureUnit(value);
   }
 
-  getServices(){
+  getServices() {
     this.log.debug('GET Services');
     return [this.thermostatService];
+  }
+
+  getComfortEndTime(hours = 2): string {
+    const currentTime = new Date();
+    currentTime.setHours(currentTime.getHours() + hours);
+    return currentTime.toISOString();
+  }
+
+  setComfortTemperature(value: number, endTime: string) {
+    this.log.debug(`Setting comfort temperature: ${value} until ${endTime}`);
+    this.schluterAPI.setComfortTemperature(value, endTime);
+  }
+
+  setPermanentTemperature(value) {
+    this.log.debug(`Setting permanent temperature: ${value}`);
+    this.schluterAPI.setManualTemperature(value);
+  }
+
+  setScheduleMode() {
+    this.log.debug('Setting to schedule mode');
+    this.schluterAPI.setScheduleMode();
   }
 }
