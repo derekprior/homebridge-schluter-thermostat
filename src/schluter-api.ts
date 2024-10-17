@@ -111,9 +111,12 @@ export class SchluterAPI {
   async getTemperatureUnit(): Promise<TemperatureUnit> {
     try {
       const result = await axios.get(SchluterAPI.accountUrl);
-      if (result.data.TempUnitIsCelsius) {
-        return TemperatureUnit.Celsius;
+      if (result.data.TempUnitIsCelsius !== undefined) {
+        return result.data.TempUnitIsCelsius
+          ? TemperatureUnit.Celsius
+          : TemperatureUnit.Fahrenheit;
       } else {
+        this.log.warn('TempUnitIsCelsius is missing from API response, defaulting to Fahrenheit.');
         return TemperatureUnit.Fahrenheit;
       }
     } catch (error) {
