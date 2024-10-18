@@ -1,9 +1,9 @@
-import { SchluterAPI } from './schluter-api';
-import { RegulationMode } from './types';
-import { AccessoryConfig, API, HAP, Logging, Service } from 'homebridge';
+import { SchluterAPI } from "./schluter-api";
+import { RegulationMode } from "./types";
+import { AccessoryConfig, API, HAP, Logging, Service } from "homebridge";
 
 export = (api: API) => {
-  api.registerAccessory('HomebridgeSchluterThermostat', Thermostat);
+  api.registerAccessory("HomebridgeSchluterThermostat", Thermostat);
 };
 
 class Thermostat {
@@ -58,28 +58,28 @@ class Thermostat {
   }
 
   handleCurrentHeatingCoolingStateGet() {
-    this.log.debug('GET CurrentHeatingCoolingState');
+    this.log.debug("GET CurrentHeatingCoolingState");
     return this.hap.Characteristic.CurrentHeatingCoolingState.HEAT;
   }
 
   handleTargetHeatingCoolingStateGet() {
-    this.log.debug('GET TargetHeatingCoolingState');
+    this.log.debug("GET TargetHeatingCoolingState");
 
     return this.hap.Characteristic.CurrentHeatingCoolingState.HEAT;
   }
 
   handleTargetHeatingCoolingStateSet() {
-    this.log.debug('SET TargetHeatingCoolingState');
+    this.log.debug("SET TargetHeatingCoolingState");
     return this.hap.Characteristic.CurrentHeatingCoolingState.HEAT;
   }
 
   handleCurrentTemperatureGet() {
-    this.log.debug('GET CurrentTemperature');
+    this.log.debug("GET CurrentTemperature");
     return this.schluterAPI.getTemperature();
   }
 
   handleTargetTemperatureGet() {
-    this.log.debug('GET TargetTemperature');
+    this.log.debug("GET TargetTemperature");
     return this.schluterAPI.getTargetTemperature();
   }
 
@@ -108,17 +108,17 @@ class Thermostat {
   }
 
   handleTemperatureDisplayUnitsGet() {
-    this.log.debug('GET TemperatureDisplayUnits');
+    this.log.debug("GET TemperatureDisplayUnits");
     return this.schluterAPI.getTemperatureUnit();
   }
 
   handleTemperatureDisplayUnitsSet(value) {
-    this.log.debug('SET TemperatureDisplayUnits');
+    this.log.debug("SET TemperatureDisplayUnits");
     this.schluterAPI.setTemperatureUnit(value);
   }
 
   getServices() {
-    this.log.debug('GET Services');
+    this.log.debug("GET Services");
     return [this.thermostatService];
   }
 
@@ -139,7 +139,7 @@ class Thermostat {
   }
 
   setScheduleMode() {
-    this.log.debug('Setting to schedule mode');
+    this.log.debug("Setting to schedule mode");
     this.schluterAPI.setScheduleMode();
   }
 }
