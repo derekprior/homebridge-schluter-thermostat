@@ -5,6 +5,16 @@ changelog, see the [commits] for each version via the version links.
 
 [commits]: https://github.com/derekprior/homebridge-schluter-thermostat/commits/main
 
+## [0.2.1] October 17, 2024
+
+### Fixed
+
+* Fixed regulation modes introdudced in 0.2.0.
+* Fixed unhandled `TempUnitIsCelcisus not defined` error.
+* Fixed logging and handling of Schluter API errors.
+
+[0.2.0]: https://github.com/derekprior/homebridge-schluter-thermostat/compare/v0.2.0...v0.2.1
+
 ## [0.2.0] October 15, 2024
 
 ### Added
