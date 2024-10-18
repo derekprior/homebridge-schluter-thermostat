@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { RegulationMode } from './types';
-import { Logging } from 'homebridge';
+import axios from "axios";
+import { RegulationMode } from "./types";
+import { Logging } from "homebridge";
 
 type ThermostatState = {
   temperature: number;
@@ -14,13 +14,13 @@ enum TemperatureUnit {
 
 export class SchluterAPI {
   private static signInUrl =
-    'https://ditra-heat-e-wifi.schluter.com/api/authenticate/user';
+    "https://ditra-heat-e-wifi.schluter.com/api/authenticate/user";
 
   private static thermostatUrl =
-    'https://ditra-heat-e-wifi.schluter.com/api/thermostat';
+    "https://ditra-heat-e-wifi.schluter.com/api/thermostat";
 
   private static accountUrl =
-    'https://ditra-heat-e-wifi.schluter.com/api/useraccount';
+    "https://ditra-heat-e-wifi.schluter.com/api/useraccount";
 
   private readonly email: string;
   private readonly password: string;
@@ -48,20 +48,20 @@ export class SchluterAPI {
     try {
       if (request.url !== SchluterAPI.signInUrl) {
         this.sessionId = this.sessionId || (await this.signIn());
-        this.log.debug('Appending session ID %s to request', this.sessionId);
+        this.log.debug("Appending session ID %s to request", this.sessionId);
         request.params = request.params || {};
         request.params.sessionid = this.sessionId;
       }
       return request;
     } catch (error) {
-      this.log.error('Error appending session ID:', error);
+      this.log.error("Error appending session ID:", error);
       throw error;
     }
   }
 
   private async clearSessionId(error) {
     if (error.response?.status === 401) {
-      this.log.debug('401 Unauthorized, clearing session ID');
+      this.log.debug("401 Unauthorized, clearing session ID");
       this.sessionId = null;
       return error;
     }
@@ -78,14 +78,14 @@ export class SchluterAPI {
         case 0:
           return result.data.SessionId;
         case 1:
-          throw new Error('Sign in: invalid email');
+          throw new Error("Sign in: invalid email");
         case 2:
-          throw new Error('Sign in: invalid password');
+          throw new Error("Sign in: invalid password");
         default:
-          throw new Error('Sign in: unknown error');
+          throw new Error("Sign in: unknown error");
       }
     } catch (error) {
-      this.log.error('Error signing in to Schluter API:', error);
+      this.log.error("Error signing in to Schluter API:", error);
       throw error;
     }
   }
@@ -94,7 +94,7 @@ export class SchluterAPI {
     try {
       return (await this.thermostatState()).temperature;
     } catch (error) {
-      this.log.error('Error fetching temperature:', error);
+      this.log.error("Error fetching temperature:", error);
       throw error;
     }
   }
@@ -103,7 +103,7 @@ export class SchluterAPI {
     try {
       return (await this.thermostatState()).targetTemperature;
     } catch (error) {
-      this.log.error('Error fetching target temperature:', error);
+      this.log.error("Error fetching target temperature:", error);
       throw error;
     }
   }
@@ -116,11 +116,13 @@ export class SchluterAPI {
           ? TemperatureUnit.Celsius
           : TemperatureUnit.Fahrenheit;
       } else {
-        this.log.warn('TempUnitIsCelsius is missing from API response, defaulting to Fahrenheit.');
+        this.log.warn(
+          "TempUnitIsCelsius is missing from API response, defaulting to Fahrenheit.",
+        );
         return TemperatureUnit.Fahrenheit;
       }
     } catch (error) {
-      this.log.error('Error fetching temperature unit:', error);
+      this.log.error("Error fetching temperature unit:", error);
       throw error;
     }
   }
@@ -130,7 +132,7 @@ export class SchluterAPI {
       const data = { TempUnitIsCelsius: value === TemperatureUnit.Celsius };
       await axios.put(SchluterAPI.accountUrl, data);
     } catch (error) {
-      this.log.error('Error setting temperature unit:', error);
+      this.log.error("Error setting temperature unit:", error);
       throw error;
     }
   }
@@ -144,7 +146,7 @@ export class SchluterAPI {
       };
       await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
     } catch (error) {
-      this.log.error('Error setting schedule mode:', error);
+      this.log.error("Error setting schedule mode:", error);
       throw error;
     }
   }
@@ -160,7 +162,7 @@ export class SchluterAPI {
       };
       await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
     } catch (error) {
-      this.log.error('Error setting comfort temperature:', error);
+      this.log.error("Error setting comfort temperature:", error);
       throw error;
     }
   }
@@ -175,7 +177,7 @@ export class SchluterAPI {
       };
       await axios.post(SchluterAPI.thermostatUrl, data, { params: params });
     } catch (error) {
-      this.log.error('Error setting manual temperature:', error);
+      this.log.error("Error setting manual temperature:", error);
       throw error;
     }
   }
@@ -184,13 +186,15 @@ export class SchluterAPI {
     try {
       const sessionId = await this.signIn();
       const params = { serialnumber: this.serialNumber, sessionid: sessionId };
-      const result = await axios.get(SchluterAPI.thermostatUrl, { params: params });
+      const result = await axios.get(SchluterAPI.thermostatUrl, {
+        params: params,
+      });
       return {
         temperature: result.data.Temperature / 100,
         targetTemperature: result.data.SetPointTemp / 100,
       };
     } catch (error) {
-      this.log.error('Error fetching thermostat state:', error);
+      this.log.error("Error fetching thermostat state:", error);
       throw error;
     }
   }

@@ -33,10 +33,10 @@ directly on your thermostat by going to `Menu`, `User Settings`, `Information`,
 Once you have your serial number, you can complete the configuration with the
 following fields:
 
-* **Name**: The name of the device as it will appear in HomeKit
-* **Email**: The email address you used to register your thermostat with Schluter
-* **Password**: The password you used to register your thermostat with Schluter
-* **Serial Number**: The serial number of your thermostat
+- **Name**: The name of the device as it will appear in HomeKit
+- **Email**: The email address you used to register your thermostat with Schluter
+- **Password**: The password you used to register your thermostat with Schluter
+- **Serial Number**: The serial number of your thermostat
 
 If you have multiple thermostats, you can add multiple instances of this plugin.
 
