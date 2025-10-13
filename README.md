@@ -1,3 +1,8 @@
+> [!WARNING]
+> I no longer use Homebridge and thus no longer use or support this plugin.
+> If you are interested in assuming ownership of the repository and NPM package,
+> please reach out (username@gmail), though any transfer will involve vetting.  
+
 # Homebridge Schluter Thermostat
 
 This is a homebridge plugin to control Schluter WiFi thermostats, used for
