@@ -74,6 +74,9 @@ export class SchluterAPI {
       const data = { email: this.email, password: this.password };
       const result = await axios.post(SchluterAPI.signInUrl, data);
 
+      // Logging the sign-in response for debugging
+      this.log.debug("Sign-in API response:", result.data);
+
       switch (result.data.ErrorCode) {
         case 0:
           return result.data.SessionId;
@@ -111,6 +114,10 @@ export class SchluterAPI {
   async getTemperatureUnit(): Promise<TemperatureUnit> {
     try {
       const result = await axios.get(SchluterAPI.accountUrl);
+
+      // Logging the response for debugging
+      this.log.debug("Account API response:", result.data);
+
       if (result.data.TempUnitIsCelsius !== undefined) {
         return result.data.TempUnitIsCelsius
           ? TemperatureUnit.Celsius
@@ -189,6 +196,22 @@ export class SchluterAPI {
       const result = await axios.get(SchluterAPI.thermostatUrl, {
         params: params,
       });
+
+      // Logging full response for debugging
+      this.log.debug("Thermostat API response:", result.data);
+
+      if (
+        !result.data ||
+        result.data.Temperature === undefined ||
+        result.data.SetPointTemp === undefined
+      ) {
+        this.log.error(
+          "Thermostat state response is missing required data:",
+          result.data,
+        );
+        throw new Error("Invalid thermostat state response");
+      }
+
       return {
         temperature: result.data.Temperature / 100,
         targetTemperature: result.data.SetPointTemp / 100,
